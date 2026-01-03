@@ -122,7 +122,7 @@ Looker Studioは上記のデータを以下の視点から閲覧可能です。
 - 正規化済み情報テーブル
 - UPDATE用テンポラリテーブル
 
-　詳細な構造は別途設計書（docs/テーブル設計書.xlsx）をご参照ください。
+　詳細な構造は別途設計書（[docs/tables.xlsx](docs/tables.xlsx)）をご参照ください。
 
 ## DAGの説明
 
@@ -151,7 +151,29 @@ Looker Studioは上記のデータを以下の視点から閲覧可能です。
 
 ### 備考
 - DAG内のタスクは依存関係に基づき順次実行されます。  
-- 個別タスクの詳細やAirflowコードはGitHubリポジトリで確認できます。
+
+### コード
+- 個別タスクの詳細やAirflowコードは下記GitHubリポジトリで確認できます。
+  https://github.com/masahiro-nakamura-etl/etl-portfolio/tree/main/dags
+
+dags  
+├─[m_company_person_register.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/m_company_person_register.py) メインのETL処理のDAG  
+├─[m_company_aggregation.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/m_company_aggregation.py)     付随機能（取引先マスタ集約）のDAG  
+│  
+├─bizlogic         上流システム別の処理ロジック  
+│ 　├─[common.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/bizlogic/common.py)      各ロジック共通機能  
+│ 　├─[crm.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/bizlogic/crm.py)         営業支援・顧客管理システム由来のデータに関するロジック  
+│ 　├─[invoice.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/bizlogic/invoice.py)     請求書管理システム由来のデータに関するロジック  
+│ 　├─[name_card.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/bizlogic/name_card.py)   名刺管理ソフト由来のデータに関するロジック  
+│ 　├─[purchase.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/bizlogic/purchase.py)    会計システム・仕入帳簿由来のデータに関するロジック  
+│ 　├─[sales.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/bizlogic/sales.py)       会計システム・売上帳簿由来のデータに関するロジック  
+│ 　└─[aggregation.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/bizlogic/aggregation.py) 付随機能（取引先マスタ集約）のロジック  
+│  
+└─common                 共通機能全般  
+　　├─[bigquery_access.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/common/bigquery_access.py)   BigQueryに対するDAO  
+　　├─[name_collection.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/common/name_collection.py)   名寄せロジック  
+　　├─[utils.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/common/utils.py)             文字列操作などの汎用的な機能  
+　　└─[validation.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/common/validation.py)        バリデーションロジック  
 
 ## BIダッシュボードの画面
 下記URLより画面を閲覧できます。  
