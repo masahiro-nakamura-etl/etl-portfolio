@@ -153,8 +153,7 @@ Looker Studioは上記のデータを以下の視点から閲覧可能です。
 - DAG内のタスクは依存関係に基づき順次実行されます。  
 
 ### コード
-- 個別タスクの詳細やAirflowコードは下記GitHubリポジトリで確認できます。
-  https://github.com/masahiro-nakamura-etl/etl-portfolio/tree/main/dags
+- 個別タスクの詳細やAirflowコードは[GitHubリポジトリ](https://github.com/masahiro-nakamura-etl/etl-portfolio/tree/main/dags)で確認できます。
 
 dags  
 ├─[m_company_person_register.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/m_company_person_register.py) メインのETL処理のDAG  
@@ -176,8 +175,7 @@ dags
 　　└─[validation.py](https://github.com/masahiro-nakamura-etl/etl-portfolio/blob/main/dags/common/validation.py)        バリデーションロジック  
 
 ## BIダッシュボードの画面
-下記URLより画面を閲覧できます。  
-https://lookerstudio.google.com/reporting/e2a32062-11c4-4aaa-9b98-913d09e89180/page/T8EjF
+[こちら](https://lookerstudio.google.com/reporting/e2a32062-11c4-4aaa-9b98-913d09e89180/page/T8EjF)から画面を閲覧できます。  
 
 ### マスタ画面
 各システムからの情報を集約して表示します。フィルタ機能を備えています。  
