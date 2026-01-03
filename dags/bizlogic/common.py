@@ -32,7 +32,7 @@ def get_csv_filepath(filename: str) -> str:
 #引数：
 # df_company_new  :第3引数の"df"に対して、m_companyに必要な列だけ抽出、必須項目追加、列名変換を行ったDataFrame
 # update_col_list :更新カラム名一覧
-# df              :workおよびnormalizedテーブルから正規化済み情報をまとめて取得したDataFrame
+# df			  :workおよびnormalizedテーブルから正規化済み情報をまとめて取得したDataFrame
 #
 def upsert_m_company(df_company_new: pd.DataFrame, update_col_list: list, df: pd.DataFrame) -> pd.DataFrame:
 	#会社内での重複行をまとめる
@@ -65,11 +65,9 @@ def upsert_m_company(df_company_new: pd.DataFrame, update_col_list: list, df: pd
 	#個人行に会社コードを反映
 	df_company_new["company_code"] = None
 	for cols in company_match_combinations:
-		#必要な列が両方にあるか確認
 		if all(c in df_company_new.columns for c in cols) and all(c in df_company_all.columns for c in cols):
 			df_mapping = df_company_all[list(cols) + ["company_code"]].copy()
 			df_merge = df_company_new.merge(df_mapping, on=list(cols), how="left", suffixes=("", "_new"))
-			#company_codeが空の行だけ更新
 			df_company_new["company_code"] = df_company_new["company_code"].combine_first(df_merge["company_code_new"])
 		else:
 			logging.warning(f"Skipping combination {cols} : Missing column")
@@ -87,15 +85,19 @@ def upsert_m_company(df_company_new: pd.DataFrame, update_col_list: list, df: pd
 	#UPDATE実行
 	if not df_company_update.empty:
 		df_company_update_to_db = df_company_update.drop(columns=["seq"], errors="ignore")
-		update_col_list = [
-			"company_name",
-			"postal_code",
-			"prefecture_code",
-			"full_address",
-			"main_phone_number",
-			"main_email_address",
-			"update_datetime",
-		]
+
+		#Boolean型のカラムは「更新前後どちらか片方でもTRUEであれば、TRUEで更新」とする。
+		#「これまで仕入先だった会社が、得意先にもなった」のようなケースに対応
+		boolean_cols = df_company_update_to_db.select_dtypes(include="bool").columns.tolist()
+		for col in boolean_cols:
+			if col in df_company_update_to_db.columns and col in df_m_company.columns:
+				existing_values = df_m_company.set_index("company_code").loc[
+					df_company_update_to_db["company_code"], col
+				].values
+				df_company_update_to_db[col] = df_company_update_to_db[col] | existing_values
+
+		update_col_list = list(set(update_col_list + boolean_cols))
+
 		update_by_df(
 			df_company_update_to_db,
 			"work",
